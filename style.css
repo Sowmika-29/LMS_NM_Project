@@ -155,5 +155,26 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .header { padding: 16px 20px; flex-direction: column; gap: 12px; align-items: flex-start; }
-    .container { padding: 20px; }
+    .header h1 { font-size: 20px; }
+    .container { padding: 16px; }
+    .course-grid { grid-template-columns: 1fr; gap: 16px; }
+    .course-card img { height: 160px; }
+    .course-content { padding: 16px; }
+    .course-content h2 { font-size: 16px; }
+    .video-card { padding: 16px; }
+    .video-card h3 { font-size: 18px; }
+    .quiz-box { padding: 20px; border-radius: 12px; }
+    .form-card { padding: 24px; }
+    .btn { width: 100%; }
+    .confirm-modal { padding: 28px; max-width: calc(100vw - 40px); }
+    .confirm-title { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+    .container { padding: 12px; }
+    .header h1 { font-size: 18px; }
+    .course-card img { height: 140px; }
+    .course-content h2 { font-size: 15px; }
+    .quiz-box { padding: 16px; }
+    #quizForm label { font-size: 13px; }
 }

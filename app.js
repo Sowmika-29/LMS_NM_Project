@@ -252,16 +252,16 @@ async function loadUsers()
     data.forEach(user => {
         body.innerHTML += `
             <tr>
-                <td>
+                <td data-label="Username">
                     ${user.username}
                 </td>
-                <td>
+                <td data-label="Password">
                     ${user.password}
                 </td>
-                <td>
+                <td data-label="Role">
                     ${user.role}
                 </td>
-                <td>
+                <td data-label="Action">
                     <button
                         class="action-btn edit-btn"
                         onclick="editUser('${user.id}')">
@@ -481,14 +481,13 @@ async function loadCoursesTable()
     {
         body.innerHTML += `
             <tr>
-                <td>
+                <td data-label="Course">
                     ${course.title}
                 </td>
-
-                <td>
+                <td data-label="Description">
                     ${course.description}
                 </td>
-                <td>
+                <td data-label="Thumbnail">
                     <img
                         src="${course.thumbnail}"
                         width="80"
@@ -497,7 +496,7 @@ async function loadCoursesTable()
                             object-fit:cover;
                         ">
                 </td>
-                <td>
+                <td data-label="Action">
                     <button
                         class="action-btn edit-btn"
                         onclick="openEditCourseModal('${course.id}')">
@@ -689,16 +688,16 @@ async function loadVideosTable()
         const courseName =course? course.title: "";
         body.innerHTML += `
             <tr>
-                <td>
+                <td data-label="Course">
                     ${courseName}
                 </td>
-                <td>
+                <td data-label="Module">
                     ${video.module_name}
                 </td>
-                <td>
+                <td data-label="Title">
                     ${video.video_title}
                 </td>
-                <td>
+                <td data-label="Action">
                     <button
                         class="action-btn edit-btn"
                         onclick="openEditVideoModal('${video.id}')">
@@ -931,13 +930,13 @@ async function loadQuizTable()
     data.forEach(q => {
         body.innerHTML += `
             <tr>
-                <td>
+                <td data-label="Quiz ID">
                     ${q.quiz_id}
                 </td>
-                <td>
+                <td data-label="Question">
                     ${q.question}
                 </td>
-                <td>
+                <td data-label="Action">
                     <button
                         class="action-btn edit-btn"
                         onclick="openEditQuizModal('${q.id}')">
@@ -1150,13 +1149,13 @@ async function loadCollegeTable()
     data.forEach(q => {
         body.innerHTML += `
             <tr>
-                <td>
+                <td data-label="College">
                     ${q.college_name}
                 </td>
-                <td>
+                <td data-label="Place">
                     ${q.place}
                 </td>
-                <td>
+                <td data-label="Action">
                     <button
                         class="action-btn edit-btn"
                         onclick="openEditCollegeModal('${q.id}')">

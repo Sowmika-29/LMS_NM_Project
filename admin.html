@@ -205,11 +205,55 @@
             .layout { flex-direction: column; }
             .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 280px; box-shadow: 4px 0 24px rgba(0,0,0,0.1); }
             .sidebar.open { left: 0; transform: translateX(0); }
-            .topbar { padding: 20px; }
-            .topbar h1 { font-size: 22px; }
+            .topbar { padding: 16px; }
+            .topbar h1 { font-size: 20px; }
+            .topbar p { font-size: 12px; }
             .menu-toggle { display: block; }
-            .pages-container { padding: 16px 20px; }
-            .card { padding: 24px; }
+            .pages-container { padding: 12px; }
+            .card { padding: 20px; }
+            .card-title { font-size: 18px; margin-bottom: 16px; }
+            .table-search { max-width: 100%; }
+
+            /* Card-based table layout on mobile */
+            .table-container { border: none; background: none; box-shadow: none; overflow: visible; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+            tbody { display: flex; flex-direction: column; gap: 12px; }
+            tr {
+                background: rgba(255,255,255,0.75); border: 1px solid rgba(226,232,240,0.8);
+                border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.03); backdrop-filter: blur(8px);
+            }
+            tr:hover td { background: transparent; }
+            td {
+                padding: 4px 0; border-bottom: none; font-size: 14px;
+                display: flex; justify-content: space-between; align-items: center;
+                overflow: hidden;
+            }
+            td > *:not(button) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            td:not(:last-child) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+            td::before {
+                content: attr(data-label);
+                font-weight: 600; font-size: 12px; color: var(--text-muted);
+                text-transform: uppercase; letter-spacing: 0.5px; margin-right: 12px; flex-shrink: 0;
+            }
+            td:last-child { justify-content: flex-end; padding-top: 8px; border-top: 1px solid rgba(226,232,240,0.5); margin-top: 4px; }
+            td:last-child::before { display: none; }
+
+            /* Modal responsive */
+            .modal-content { padding: 24px; max-width: 100%; }
+            .modal-header h2 { font-size: 16px; }
+            
+            /* Forms */
+            .input-group { margin-bottom: 14px; }
+            .btn { padding: 12px 20px; }
+        }
+        
+        @media (max-width: 480px) {
+            .pages-container { padding: 10px; }
+            .card { padding: 16px; border-radius: 12px; }
+            .topbar h1 { font-size: 18px; }
+            .action-btn { padding: 6px 10px; font-size: 12px; }
         }
     </style>
 </head>
