@@ -1,34 +1,25 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<title>Upload Video</title>
-
+<title>Upload Video - Nextgen Edu Connect</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-<h1>Upload Video</h1>
-
-<input type="text"
-       id="title"
-       placeholder="Video Title">
-
-<br><br>
-
-<input type="file"
-       id="videoFile">
-
-<br><br>
-
-<button onclick="uploadVideo()">
-Upload
-</button>
-
+<div class="header">
+    <h1>Upload Video</h1>
+    <div class="header-right">
+        <button onclick="window.history.back()">Back</button>
+    </div>
+</div>
+<div class="container">
+    <div class="form-card">
+        <h2 style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Upload New Video</h2>
+        <input type="text" id="title" placeholder="Video Title">
+        <input type="file" id="videoFile" accept="video/mp4">
+        <button type="button" onclick="uploadVideo()" class="btn">Upload Video</button>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
 <script src="app.js"></script>
-
 </body>
 </html>

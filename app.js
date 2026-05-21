@@ -2,6 +2,97 @@ const SUPABASE_URL ="https://akodraeqesulsofaanna.supabase.co";
 const SUPABASE_KEY ="sb_publishable_q6jaRXcDuGa6qXCU4FZrfA_OObM1r2C";
 const client =supabase.createClient(SUPABASE_URL,SUPABASE_KEY );
 
+// Global Toast Notifications replacing native alert()
+window.showToast = function(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = '';
+    if (type === 'success') {
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    } else if (type === 'error') {
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    } else if (type === 'warning') {
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+    } else {
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+    }
+    
+    toast.innerHTML = `<div class="toast-icon">${icon}</div><div>${message}</div>`;
+    container.appendChild(toast);
+    
+    // trigger reflow
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+};
+
+window.alert = function(message) {
+    let type = 'info';
+    const msg = message.toLowerCase();
+    if (msg.includes('success') || msg.includes('added') || msg.includes('deleted') || msg.includes('updated')) {
+        type = 'success';
+    } else if (msg.includes('error') || msg.includes('failed') || msg.includes('invalid') || msg.includes('incorrect') || msg.includes('not found')) {
+        type = 'error';
+    } else if (msg.includes('please fill') || msg.includes('exists')) {
+        type = 'warning';
+    }
+    window.showToast(message, type);
+};
+
+// Global Confirm Modal replacing native confirm()
+window.showConfirm = function(message) {
+    return new Promise((resolve) => {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        
+        const modal = document.createElement('div');
+        modal.className = 'confirm-modal';
+        modal.innerHTML = `
+            <div class="confirm-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <h3 class="confirm-title">Are you sure?</h3>
+            <p class="confirm-message">${message}</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-cancel">Cancel</button>
+                <button class="confirm-btn confirm-delete">Delete</button>
+            </div>
+        `;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        // trigger reflow for animation
+        void overlay.offsetWidth;
+        overlay.classList.add('show');
+        
+        const cleanup = (result) => {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 250);
+            resolve(result);
+        };
+        
+        modal.querySelector('.confirm-cancel').addEventListener('click', () => cleanup(false));
+        modal.querySelector('.confirm-delete').addEventListener('click', () => cleanup(true));
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+    });
+};
+
 window.onload = function () 
 {
     loadCoursesDropdown();
@@ -271,7 +362,7 @@ async function updateUser()
 
 async function deleteUser(id) 
 {
-    const ok =confirm("Delete this user?");
+    const ok = await showConfirm("This user will be permanently removed. This action cannot be undone.");
     if (!ok) 
     {
         return;
@@ -489,7 +580,7 @@ window.updateCourse = async function ()
 
 window.deleteCourse =async function (id) 
 {
-    const ok = confirm("Delete this course?");
+    const ok = await showConfirm("This course and its associated content will be permanently removed.");
     if (!ok) 
     {
         return;
@@ -717,7 +808,7 @@ async function updateVideo()
 
 async function deleteVideo(id)
 {
-    const confirmDelete =confirm("Are you sure want to delete this video?" );
+    const confirmDelete = await showConfirm("This video will be permanently deleted from storage. This action cannot be undone.");
     if (!confirmDelete)
     {
         return;
@@ -949,7 +1040,7 @@ function closeQuizModal()
 
 async function deleteQuiz(id)
 {
-    const confirmDelete =confirm("Are you sure want to delete this Quiz question?" );
+    const confirmDelete = await showConfirm("This quiz question will be permanently deleted.");
     if (!confirmDelete)
     {
         return;
@@ -1162,7 +1253,7 @@ function closeCollegeModal()
 
 async function deleteCollege(id)
 {
-    const confirmDelete =confirm("Are you sure want to delete this College?" );
+    const confirmDelete = await showConfirm("This college will be permanently removed from the system.");
     if (!confirmDelete)
     {
         return;
