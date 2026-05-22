@@ -1350,44 +1350,64 @@ async function openQuiz()
 
 let questions = [];
 
-async function loadQuiz()
+window.loadQuiz = async function()
 {
-    const quizId =localStorage.getItem("quizId");
-    const { data, error } = await client.from("questions").select("*").eq("quiz_id", quizId);
-    questions = data;
-    const form =document.getElementById("quizForm");
+    const quizId = localStorage.getItem("quizId");
+    const { data, error } = await client.from("quizzes").select("*").eq("quiz_id", quizId);
+    questions = data || [];
+    const form = document.getElementById("quizForm");
     form.innerHTML = "";
-    data.forEach((q, index) => {
-        form.innerHTML += `
-            <div>
-                <h3>
-                    Question ${index + 1}:
-                    ${q.question}
-                </h3>
-                <input type="radio"
-                       name="q${index}"
-                       value="${q.option1}">
-                       ${q.option1}
-                <br>
-                <input type="radio"
-                       name="q${index}"
-                       value="${q.option2}">
-                       ${q.option2}
-                <br>
-                <input type="radio"
-                       name="q${index}"
-                       value="${q.option3}">
-                       ${q.option3}
-                <br>
-                <input type="radio"
-                       name="q${index}"
-                       value="${q.option4}">
-                       ${q.option4}
+    
+    if (questions.length === 0) {
+        form.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 40px 0;">No questions found for this quiz.</p>`;
+        return;
+    }
 
-                <br><br>
-
+    questions.forEach((q, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "quiz-question-card";
+        questionDiv.style = "border-bottom: 2px solid var(--border-color); padding-bottom: 28px; margin-bottom: 28px;";
+        
+        questionDiv.innerHTML = `
+            <h3 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 18px; font-family: 'Plus Jakarta Sans', sans-serif; text-transform: none; font-weight: 700; display: flex; align-items: flex-start; gap: 8px;">
+                <span style="background: var(--primary); color: white; padding: 2px 10px; font-family: 'Barlow Condensed'; font-size: 14px; flex-shrink: 0;">Q${index + 1}</span> 
+                <span>${q.question}</span>
+            </h3>
+            <div class="quiz-options-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                <label class="quiz-option-label" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 2px solid var(--border-color); background: var(--bg-light); cursor: pointer; transition: var(--transition); border-radius: 2px;">
+                    <input type="radio" name="q${index}" value="${q.option1}" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--secondary);">${q.option1}</span>
+                </label>
+                <label class="quiz-option-label" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 2px solid var(--border-color); background: var(--bg-light); cursor: pointer; transition: var(--transition); border-radius: 2px;">
+                    <input type="radio" name="q${index}" value="${q.option2}" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--secondary);">${q.option2}</span>
+                </label>
+                <label class="quiz-option-label" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 2px solid var(--border-color); background: var(--bg-light); cursor: pointer; transition: var(--transition); border-radius: 2px;">
+                    <input type="radio" name="q${index}" value="${q.option3}" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--secondary);">${q.option3}</span>
+                </label>
+                <label class="quiz-option-label" style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 2px solid var(--border-color); background: var(--bg-light); cursor: pointer; transition: var(--transition); border-radius: 2px;">
+                    <input type="radio" name="q${index}" value="${q.option4}" style="accent-color: var(--primary); width: 18px; height: 18px; cursor: pointer;">
+                    <span style="font-size: 14px; font-weight: 600; color: var(--secondary);">${q.option4}</span>
+                </label>
             </div>
         `;
+        form.appendChild(questionDiv);
+    });
+
+    // Add interactivity to label elements
+    document.querySelectorAll('.quiz-option-label input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const name = this.getAttribute('name');
+            document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                r.parentElement.style.borderColor = 'var(--border-color)';
+                r.parentElement.style.background = 'var(--bg-light)';
+            });
+            if (this.checked) {
+                this.parentElement.style.borderColor = 'var(--primary)';
+                this.parentElement.style.background = '#FFF3EB';
+            }
+        });
     });
 }
 
@@ -1495,6 +1515,237 @@ async function loadQuizCourses() {
         `;
     });
 }
+
+// Student Course Details & Progress Tracker Implementation
+let courseVideos = [];
+let activeVideo = null;
+
+window.initCourseDetails = async function() {
+    const courseId = localStorage.getItem("courseId");
+    if (!courseId) {
+        window.location = "dashboard.html";
+        return;
+    }
+
+    try {
+        // Load course details
+        const { data: course, error } = await client.from("courses").select("*").eq("id", courseId).single();
+        if (error || !course) {
+            alert("Course details could not be loaded.");
+            return;
+        }
+
+        document.getElementById("courseTitle").innerText = course.title;
+        document.getElementById("courseDesc").innerText = course.description;
+
+        await window.loadCourseVideos(courseId);
+    } catch (e) {
+        console.error("Error in initCourseDetails:", e);
+    }
+};
+
+window.loadCourseVideos = async function(courseId) {
+    try {
+        const { data: videos, error } = await client.from("videos").select("*").eq("course_id", courseId);
+        if (error) {
+            alert("Videos could not be loaded.");
+            return;
+        }
+
+        courseVideos = videos || [];
+        const container = document.getElementById("modulesContainer");
+        container.innerHTML = "";
+
+        if (courseVideos.length === 0) {
+            container.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">No videos uploaded for this course yet.</p>`;
+            updateProgress();
+            return;
+        }
+
+        // Group videos by module_name
+        const modules = {};
+        courseVideos.forEach(video => {
+            const modName = video.module_name || "Introductory Material";
+            if (!modules[modName]) {
+                modules[modName] = [];
+            }
+            modules[modName].push(video);
+        });
+
+        // Get watched list
+        const user = localStorage.getItem("user") || "anonymous";
+        const watchedKey = `watched_videos_${user}_${courseId}`;
+        let watchedList = [];
+        try {
+            watchedList = JSON.parse(localStorage.getItem(watchedKey)) || [];
+        } catch (e) {
+            watchedList = [];
+        }
+
+        // Render modules
+        for (const [moduleName, vList] of Object.entries(modules)) {
+            const modDiv = document.createElement("div");
+            modDiv.className = "module-group";
+            
+            const titleH = document.createElement("h4");
+            titleH.className = "module-group-title";
+            titleH.innerText = moduleName;
+            modDiv.appendChild(titleH);
+
+            vList.forEach(video => {
+                const isWatched = watchedList.includes(video.id);
+                const itemDiv = document.createElement("div");
+                itemDiv.className = `video-item ${isWatched ? 'watched' : ''}`;
+                itemDiv.id = `video-item-${video.id}`;
+                itemDiv.onclick = () => window.playVideo(video.id);
+
+                itemDiv.innerHTML = `
+                    <div class="video-item-left">
+                        <span class="video-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-circle"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                        </span>
+                        <span class="video-item-title">${video.video_title}</span>
+                    </div>
+                    <div class="video-item-check">✓</div>
+                `;
+                modDiv.appendChild(itemDiv);
+            });
+
+            container.appendChild(modDiv);
+        }
+
+        // Play the first video initially
+        window.playVideo(courseVideos[0].id);
+        updateProgress();
+    } catch (e) {
+        console.error("Error loading course videos:", e);
+    }
+};
+
+window.playVideo = function(videoId) {
+    const video = courseVideos.find(v => v.id === videoId);
+    if (!video) return;
+
+    activeVideo = video;
+
+    // Highlight active in UI
+    document.querySelectorAll(".video-item").forEach(item => {
+        item.classList.remove("active");
+    });
+    const el = document.getElementById(`video-item-${videoId}`);
+    if (el) {
+        el.classList.add("active");
+    }
+
+    // Set video player src and play
+    const player = document.getElementById("mainVideoPlayer");
+    player.src = video.video_url;
+    player.load();
+    player.play().catch(err => console.log("Auto-play prevented: ", err));
+
+    document.getElementById("activeVideoTitle").innerText = video.video_title;
+    document.getElementById("activeVideoModule").innerText = video.module_name || "";
+
+    // Enable mark completed button if not already completed
+    const user = localStorage.getItem("user") || "anonymous";
+    const courseId = localStorage.getItem("courseId");
+    const watchedKey = `watched_videos_${user}_${courseId}`;
+    let watchedList = [];
+    try {
+        watchedList = JSON.parse(localStorage.getItem(watchedKey)) || [];
+    } catch (e) {}
+
+    const markBtn = document.getElementById("markCompletedBtn");
+    if (watchedList.includes(videoId)) {
+        markBtn.disabled = true;
+        markBtn.innerText = "Completed";
+    } else {
+        markBtn.disabled = false;
+        markBtn.innerText = "Mark as Completed";
+    }
+};
+
+window.markActiveVideoCompleted = function() {
+    if (!activeVideo) return;
+    
+    const user = localStorage.getItem("user") || "anonymous";
+    const courseId = localStorage.getItem("courseId");
+    const watchedKey = `watched_videos_${user}_${courseId}`;
+    
+    let watchedList = [];
+    try {
+        watchedList = JSON.parse(localStorage.getItem(watchedKey)) || [];
+    } catch (e) {}
+
+    if (!watchedList.includes(activeVideo.id)) {
+        watchedList.push(activeVideo.id);
+        localStorage.setItem(watchedKey, JSON.stringify(watchedList));
+    }
+
+    // Update UI
+    const el = document.getElementById(`video-item-${activeVideo.id}`);
+    if (el) {
+        el.classList.add("watched");
+    }
+
+    const markBtn = document.getElementById("markCompletedBtn");
+    markBtn.disabled = true;
+    markBtn.innerText = "Completed";
+
+    alert(`'${activeVideo.video_title}' completed!`);
+    updateProgress();
+};
+
+window.onVideoEnded = function() {
+    if (activeVideo) {
+        window.markActiveVideoCompleted();
+    }
+};
+
+function updateProgress() {
+    const courseId = localStorage.getItem("courseId");
+    const user = localStorage.getItem("user") || "anonymous";
+    const watchedKey = `watched_videos_${user}_${courseId}`;
+    
+    let watchedList = [];
+    try {
+        watchedList = JSON.parse(localStorage.getItem(watchedKey)) || [];
+    } catch (e) {}
+
+    const total = courseVideos.length;
+    const completed = courseVideos.filter(v => watchedList.includes(v.id)).length;
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    document.getElementById("progressPercentage").innerText = `${percentage}%`;
+    document.getElementById("progressBarFill").style.width = `${percentage}%`;
+    document.getElementById("progressText").innerText = `${completed} of ${total} videos completed`;
+
+    const quizBtn = document.getElementById("quizBtn");
+    if (total > 0 && completed === total) {
+        quizBtn.disabled = false;
+    } else {
+        quizBtn.disabled = true;
+    }
+}
+
+window.goQuiz = function() {
+    // Find quiz ID from course videos
+    let quizId = null;
+    for (let v of courseVideos) {
+        if (v.quiz_id) {
+            quizId = v.quiz_id;
+            break;
+        }
+    }
+
+    if (!quizId) {
+        alert("No quiz is currently configured for this course. Please contact the administrator.");
+        return;
+    }
+
+    localStorage.setItem("quizId", quizId);
+    window.location = "quiz.html";
+};
 
 
 

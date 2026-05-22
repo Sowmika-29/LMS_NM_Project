@@ -4,92 +4,225 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Nextgen Edu Connect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        :root {
+            --primary: #FF6B00;
+            --primary-hover: #E05E00;
+            --secondary: #0A1F5C;
+            --accent: #FF9A3C;
+            --bg-dark: #07153E;
+            --text-light: #FFFFFF;
+            --text-dark: #0A1F5C;
+            --text-muted: #56648D;
+            --border-color: #E2E8F0;
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         body { 
-            height: 100vh; display: flex; justify-content: center; align-items: center; 
-            background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #f8fafc 100%); 
-            color: #0F172A; overflow: hidden; position: relative;
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #152C73 100%); 
+            color: var(--text-light); 
+            overflow: hidden; 
+            position: relative;
         }
 
         /* Ambient Orbs */
         body::before {
             content: ''; position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
-            z-index: -1; filter: blur(60px); border-radius: 50%; pointer-events: none;
+            background: radial-gradient(circle, rgba(255, 107, 0, 0.15) 0%, transparent 70%);
+            z-index: 1; filter: blur(60px); pointer-events: none;
         }
         body::after {
             content: ''; position: absolute; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
-            z-index: -1; filter: blur(60px); border-radius: 50%; pointer-events: none;
+            background: radial-gradient(circle, rgba(10, 31, 92, 0.5) 0%, transparent 70%);
+            z-index: 1; filter: blur(60px); pointer-events: none;
         }
         
         .login-container { 
-            width: 100%; max-width: 440px; padding: 48px; 
-            background: rgba(255, 255, 255, 0.75); border-radius: 20px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04); border: 1px solid rgba(255,255,255,0.8); 
-            backdrop-filter: blur(20px); margin: 20px; 
+            width: 100%; 
+            max-width: 460px; 
+            padding: 48px; 
+            background: #FFFFFF; 
+            border-top: 6px solid var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35); 
+            margin: 20px; 
+            z-index: 10;
+            position: relative;
+        }
+
+        .geom-stripes {
+            height: 4px;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--primary),
+                var(--primary) 6px,
+                var(--accent) 6px,
+                var(--accent) 12px
+            );
+            margin-bottom: 24px;
         }
         
-        .logo { 
-            width: 80px; height: 80px; margin: 0 auto 24px; border-radius: 20px; 
-            background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%); 
-            display: flex; justify-content: center; align-items: center; color: white; 
-            font-size: 28px; font-weight: 700; letter-spacing: 1px; 
-            box-shadow: 0 10px 25px rgba(59,130,246,0.3); 
+        .logo-badge { 
+            background-color: var(--secondary);
+            color: var(--text-light);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            padding: 4px 12px;
+            transform: skewX(-10deg);
+            display: inline-block;
+            margin: 0 auto 16px;
         }
-        h1 { text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .sub-text { text-align: center; color: #64748B; margin-bottom: 32px; font-size: 14px; }
+
+        h1 { 
+            text-align: center; 
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 32px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+        .sub-text { text-align: center; color: var(--text-muted); margin-bottom: 32px; font-size: 14px; font-weight: 500; }
         
         .role-selection { margin-bottom: 24px; }
-        .role-title { display: block; margin-bottom: 12px; font-size: 13px; font-weight: 500; color: #64748B; text-align: center; }
-        .role-wrapper { display: flex; gap: 12px; justify-content: center; }
+        .role-title { 
+            display: block; 
+            margin-bottom: 12px; 
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--secondary); 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center; 
+        }
+        .role-wrapper { display: flex; gap: 8px; justify-content: center; }
         
         .role-option {
-            flex: 1; padding: 16px 0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;
-            background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,1); display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            flex: 1; 
+            padding: 12px 6px; 
+            border: 2px solid var(--border-color); 
+            cursor: pointer; 
+            transition: var(--transition);
+            background: var(--border-color); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            border-radius: 2px;
         }
-        .role-option:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); background: #FFFFFF; }
-        .role-option.active { background: #FFFFFF; border-color: #3B82F6; box-shadow: 0 0 0 2px #3B82F6, 0 8px 20px rgba(59,130,246,0.15); }
-        .role-icon { margin-bottom: 4px; display: flex; align-items: center; justify-content: center; color: #64748B; transition: 0.2s; }
-        .role-option.active .role-icon { color: #2563EB; }
-        .role-info h3 { font-size: 13px; font-weight: 500; color: #0F172A; }
-        .role-option.active .role-info h3 { color: #2563EB; font-weight: 600; }
+        .role-option:hover { 
+            border-color: var(--secondary); 
+            background: #FFFFFF;
+            transform: translateY(-2px); 
+        }
+        .role-option.active { 
+            background: var(--secondary); 
+            border-color: var(--secondary); 
+            box-shadow: 3px 3px 0px var(--primary);
+        }
+        .role-icon { margin-bottom: 4px; display: flex; align-items: center; justify-content: center; color: var(--secondary); transition: var(--transition); }
+        .role-option.active .role-icon { color: var(--primary); }
+        .role-info h3 { 
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 14px; 
+            font-weight: 700; 
+            color: var(--secondary); 
+            text-transform: uppercase;
+        }
+        .role-option.active .role-info h3 { color: var(--text-light); }
         
         .input-group { margin-bottom: 16px; }
         input { 
-            width: 100%; padding: 16px; border: 1px solid #CBD5E1; border-radius: 10px; 
-            background: rgba(255,255,255,0.9); font-size: 14px; outline: none; transition: all 0.3s ease; color: #0F172A; 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 2px solid var(--border-color); 
+            background: #F8F9FF; 
+            font-size: 14px; 
+            outline: none; 
+            transition: var(--transition); 
+            color: var(--text-dark); 
+            border-radius: 2px;
+            font-weight: 500;
         }
-        input:focus { border-color: #3B82F6; box-shadow: 0 0 0 4px rgba(59,130,246,0.15); background: #FFFFFF; }
-        input::placeholder { color: #94a3b8; }
+        input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1); 
+            background: #FFFFFF; 
+        }
+        input::placeholder { color: #A0ABCE; }
         
         button { 
-            width: 100%; padding: 16px; border: none; border-radius: 10px; 
-            background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%); 
-            color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 12px; 
-            box-shadow: 0 8px 20px rgba(59,130,246,0.3);
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            background-color: var(--primary); 
+            color: white; 
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 18px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer; 
+            transition: var(--transition); 
+            margin-top: 12px; 
+            box-shadow: 4px 4px 0px var(--secondary);
+            border-radius: 2px;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(59,130,246,0.4); }
+        button:hover { 
+            background-color: var(--primary-hover);
+            transform: translate(-2px, -2px); 
+            box-shadow: 6px 6px 0px var(--secondary);
+        }
+        button:active {
+            transform: translate(0, 0);
+            box-shadow: 4px 4px 0px var(--secondary);
+        }
         
-        #msg { text-align: center; margin-top: 16px; color: #ef4444; font-size: 13px; font-weight: 500; min-height: 20px; }
+        #msg { 
+            text-align: center; 
+            margin-top: 16px; 
+            color: #ef4444; 
+            font-size: 13px; 
+            font-weight: 600; 
+            min-height: 20px; 
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">NEC</div>
+        <div style="text-align: center;">
+            <div class="logo-badge">NEC CONNECT</div>
+        </div>
         <h1>Welcome Back</h1>
         <p class="sub-text">Login to continue your learning journey</p>
+        
+        <div class="geom-stripes"></div>
+
         <div class="role-selection">
             <span class="role-title">Continue As</span>
             <div class="role-wrapper">
-                <div class="role-option active" onclick="selectRole(this,'Student')"><div class="role-icon"><i data-lucide="graduation-cap" stroke-width="2" width="22" height="22"></i></div><div class="role-info"><h3>Student</h3></div></div>
-                <div class="role-option" onclick="selectRole(this,'Tutor')"><div class="role-icon"><i data-lucide="presentation" stroke-width="2" width="22" height="22"></i></div><div class="role-info"><h3>Tutor</h3></div></div>
-                <div class="role-option" onclick="selectRole(this,'Admin')"><div class="role-icon"><i data-lucide="shield-check" stroke-width="2" width="22" height="22"></i></div><div class="role-info"><h3>Admin</h3></div></div>
+                <div class="role-option active" onclick="selectRole(this,'Student')">
+                    <div class="role-icon"><i data-lucide="graduation-cap" stroke-width="2.5" width="20" height="20"></i></div>
+                    <div class="role-info"><h3>Student</h3></div>
+                </div>
+                <div class="role-option" onclick="selectRole(this,'Tutor')">
+                    <div class="role-icon"><i data-lucide="presentation" stroke-width="2.5" width="20" height="20"></i></div>
+                    <div class="role-info"><h3>Tutor</h3></div>
+                </div>
+                <div class="role-option" onclick="selectRole(this,'Admin')">
+                    <div class="role-icon"><i data-lucide="shield-check" stroke-width="2.5" width="20" height="20"></i></div>
+                    <div class="role-info"><h3>Admin</h3></div>
+                </div>
             </div>
         </div>
         <input type="hidden" id="role" value="Student">

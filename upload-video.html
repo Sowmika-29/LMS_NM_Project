@@ -1,25 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Upload Video - Nextgen Edu Connect</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - Nextgen Edu Connect</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-<div class="header">
-    <h1>Upload Video</h1>
-    <div class="header-right">
-        <button onclick="window.history.back()">Back</button>
+    <!-- Top Navigation Bar -->
+    <div class="nav-bar">
+        <a href="dashboard.html" class="nav-logo">
+            <span class="nav-logo-icon">NEC</span>
+            <span class="nav-logo-text">NEXTGEN EDU</span>
+        </a>
+        <div class="nav-menu">
+            <button onclick="window.history.back()" class="btn btn-outline" style="padding: 8px 16px; font-size: 13px;">Back</button>
+        </div>
     </div>
-</div>
-<div class="container">
-    <div class="form-card">
-        <h2 style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Upload New Video</h2>
-        <input type="text" id="title" placeholder="Video Title">
-        <input type="file" id="videoFile" accept="video/mp4">
-        <button type="button" onclick="uploadVideo()" class="btn">Upload Video</button>
+
+    <div class="geom-divider"></div>
+
+    <div class="main-content" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 120px);">
+        <div class="card" style="width: 100%; max-width: 500px;">
+            <h2 class="card-title" style="margin-bottom: 24px;">Upload New Video</h2>
+            
+            <div class="input-group">
+                <label class="input-label">Video Title</label>
+                <input type="text" id="title" placeholder="Enter video title">
+            </div>
+
+            <div class="input-group" style="margin-bottom: 30px;">
+                <label class="input-label">Select MP4 Video File</label>
+                <input type="file" id="videoFile" accept="video/mp4">
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="button" onclick="uploadVideo()" class="btn btn-primary" style="flex: 1;">Upload Video</button>
+                <button type="button" onclick="window.history.back()" class="btn btn-outline">Cancel</button>
+            </div>
+        </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="app.js"></script>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>

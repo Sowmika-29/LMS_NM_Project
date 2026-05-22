@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course details - Nextgen Edu Connect</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body onload="initCourseDetails()">
+    <!-- Top Navigation Bar -->
+    <div class="nav-bar">
+        <a href="dashboard.html" class="nav-logo">
+            <span class="nav-logo-icon">NEC</span>
+            <span class="nav-logo-text">NEXTGEN EDU</span>
+        </a>
+        <div class="nav-menu">
+            <a href="dashboard.html" class="nav-link">Dashboard</a>
+            <span id="welcome" style="font-weight: 700; color: var(--secondary); font-size: 14px;"></span>
+            <button onclick="logout()" class="btn btn-outline" style="padding: 8px 16px; font-size: 13px;">Logout</button>
+        </div>
+    </div>
+
+    <!-- Hero Banner with gradient overlay -->
+    <div class="hero-banner">
+        <div class="hero-content">
+            <span class="hero-tag">COURSE DETAILS</span>
+            <h1 class="hero-title" id="courseTitle">Loading Course...</h1>
+            <p class="hero-desc" id="courseDesc">Please wait while we retrieve course details.</p>
+            <div id="courseBadgeContainer"></div>
+        </div>
+    </div>
+
+    <div class="geom-divider"></div>
+
+    <!-- Main Section -->
+    <div class="main-content">
+        <!-- Progress Tracker Widget -->
+        <div class="progress-widget">
+            <div class="progress-header">
+                <span class="progress-label">Course Completion Progress</span>
+                <span class="progress-percentage" id="progressPercentage">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <div style="margin-top: 12px; display: flex; justify-content: space-between; font-size: 14px;">
+                <span id="progressText">0 of 0 videos completed</span>
+                <button id="quizBtn" class="btn btn-primary" style="padding: 6px 16px; font-size: 13px;" onclick="goQuiz()" disabled>Take Quiz</button>
+            </div>
+        </div>
+
+        <!-- Video Player & Module Details Grid -->
+        <div class="details-container">
+            <!-- Left: Video Player -->
+            <div class="video-player-card">
+                <div class="video-wrapper">
+                    <video id="mainVideoPlayer" controls onended="onVideoEnded()">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-info">
+                    <h2 id="activeVideoTitle">Select a video to start learning</h2>
+                    <p id="activeVideoModule" style="color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 13px; margin-bottom: 12px; letter-spacing: 0.5px;"></p>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button id="markCompletedBtn" class="btn btn-secondary" onclick="markActiveVideoCompleted()" disabled>Mark as Completed</button>
+                        <button class="btn btn-outline" onclick="window.history.back()">Back to Courses</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Modules Accordion/List -->
+            <div class="modules-card">
+                <h3 class="modules-card-title">Course Modules</h3>
+                <div id="modulesContainer">
+                    <p style="color: var(--text-muted); font-size: 14px;">No modules loaded.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.getElementById("welcome").innerText = "Logged in as: " + (localStorage.getItem("user") || "User");
+        lucide.createIcons();
+    </script>
+</body>
+</html>
